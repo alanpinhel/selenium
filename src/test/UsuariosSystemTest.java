@@ -1,38 +1,66 @@
 package test;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 public class UsuariosSystemTest {
-    @Test
-    public void deveAdicionarUmUsuario() throws InterruptedException {
-    	System.setProperty("webdriver.gecko.driver", "C:/Users/Alan Pinhel/Downloads/geckodriver.exe");
-    	
-    	WebDriver driver = new FirefoxDriver();
-        driver.get("http://localhost:8080/usuarios/new");
+	private WebDriver driver;
+	private UsuariosPage usuarios;
 
-        WebElement nome = driver.findElement(By.name("usuario.nome"));
-        WebElement email = driver.findElement(By.name("usuario.email"));
+	@Before
+	public void setup() {
+		System.setProperty("webdriver.gecko.driver", "C:/Users/Alan Pinhel/Downloads/geckodriver.exe");
+		driver = new FirefoxDriver();
+		usuarios = new UsuariosPage(driver);
+		usuarios.visita();
+	}
 
-        nome.sendKeys("Ronaldo Luiz de Albuquerque");
-        email.sendKeys("ronaldo2009@terra.com.br");
-        nome.submit();
+	@After
+	public void finish() {
+		driver.close();
+	}
+	
+	@Test
+	public void deveAdicionarUmUsuario() {
+		usuarios.novo().cadastra("Adriano Xavier", "axavier@empresa.com.br");
 
-        Thread.sleep(500);
-        
-        boolean achouNome = driver.getPageSource()
-            .contains("Ronaldo Luiz de Albuquerque");
-        boolean achouEmail = driver.getPageSource()
-            .contains("ronaldo2009@terra.com.br");
+		assertTrue(usuarios.existeNaListagem("Adriano Xavier", "axavier@empresa.com.br"));
+	}
 
-        assertTrue(achouNome);
-        assertTrue(achouEmail);
+	@Test
+	public void naoDeveAdicionarUmUsuarioSemNome() {
+		NovoUsuarioPage form = usuarios.novo();
+		
+		form.cadastra("", "axavier@empresa.com.br");
+		
+		assertTrue(form.validacaoDeNomeObrigatorio());
+	}
 
-        driver.close();
-    }
+	@Test
+	public void naoDeveAdicionarUmUsuarioSemNomeOuSemEmail() {
+		NovoUsuarioPage form = usuarios.novo();
+		
+		form.cadastra("", "");
+		
+		assertTrue(form.validacaoDeNomeObrigatorio());
+		assertTrue(form.validacaoDeEmailObrigatorio());
+	}
+	
+	@Test
+	public void deveExcluirUmUsuario() throws InterruptedException {
+		usuarios.novo().cadastra("Stan Smith", "stan@smith.com");
+		assertTrue(usuarios.existeNaListagem("Stan Smith", "stan@smith.com"));
+		
+		usuarios.excluiUsuarioNaPosicao(1);
+		
+		Thread.sleep(500);
+		
+		assertFalse(usuarios.existeNaListagem("Stan Smith", "stan@smith.com"));
+	}
 }

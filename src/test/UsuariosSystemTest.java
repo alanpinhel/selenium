@@ -17,6 +17,9 @@ public class UsuariosSystemTest {
 	public void setup() {
 		System.setProperty("webdriver.gecko.driver", "C:/Users/Alan Pinhel/Downloads/geckodriver.exe");
 		driver = new FirefoxDriver();
+		
+		driver.get("http://localhost:8080/apenas-teste/limpa");
+		
 		usuarios = new UsuariosPage(driver);
 		usuarios.visita();
 	}
@@ -62,5 +65,14 @@ public class UsuariosSystemTest {
 		Thread.sleep(500);
 		
 		assertFalse(usuarios.existeNaListagem("Stan Smith", "stan@smith.com"));
+	}
+	
+	@Test
+	public void deveAlterarUmUsuario() throws InterruptedException {
+		usuarios.novo().cadastra("Stan Smith", "stan@smith.com");
+		usuarios.altera(1).para("Smith Stan", "stan@smith.com");
+		
+		assertFalse(usuarios.existeNaListagem("Stan Smith", "stan@smith.com"));
+		assertTrue(usuarios.existeNaListagem("Smith Stan", "stan@smith.com"));
 	}
 }

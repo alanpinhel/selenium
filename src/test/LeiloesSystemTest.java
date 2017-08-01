@@ -17,7 +17,7 @@ public class LeiloesSystemTest {
 		System.setProperty("webdriver.gecko.driver", "C:/Users/Alan Pinhel/Downloads/geckodriver.exe");
 		driver = new FirefoxDriver();
 		
-		driver.get("http://localhost:8080/apenas-teste/limpa");
+		driver.get(new URLDaAplicacao().getUrlBase() + "/apenas-teste/limpa");
 		
 		leiloes = new LeiloesPage(driver);
 		usuarios = new UsuariosPage(driver);
@@ -34,21 +34,17 @@ public class LeiloesSystemTest {
 	}
 	
 	@Test
-	public void deveCadastrarUmLeilao() throws InterruptedException {
+	public void deveCadastrarUmLeilao() {
 		leiloes.novo().cadastra("Geladeira", 123.00, "Paulo Henrique", true);
-		
-		Thread.sleep(500);
 		
 		Assert.assertTrue(leiloes.existe("Geladeira", 123.00, "Paulo Henrique", true));
 	}
 	
 	@Test
-	public void naoDeveCadastrarUmLeilaoSemNomeOuSemValor() throws InterruptedException {
+	public void naoDeveCadastrarUmLeilaoSemNomeOuSemValor() {
 		NovoLeilaoPage novoLeilao = leiloes.novo();
 		
 		novoLeilao.cadastra("", 0.00, "Paulo Henrique", true);
-		
-		Thread.sleep(500);
 		
 		Assert.assertTrue(novoLeilao.validacaoDeNomeObrigatorio());
 		Assert.assertTrue(novoLeilao.validacaoDeValorObrigatorio());

@@ -18,7 +18,7 @@ public class UsuariosSystemTest {
 		System.setProperty("webdriver.gecko.driver", "C:/Users/Alan Pinhel/Downloads/geckodriver.exe");
 		driver = new FirefoxDriver();
 		
-		driver.get("http://localhost:8080/apenas-teste/limpa");
+		driver.get(new URLDaAplicacao().getUrlBase() + "/apenas-teste/limpa");
 		
 		usuarios = new UsuariosPage(driver);
 		usuarios.visita();
@@ -61,8 +61,6 @@ public class UsuariosSystemTest {
 		assertTrue(usuarios.existeNaListagem("Stan Smith", "stan@smith.com"));
 		
 		usuarios.excluiUsuarioNaPosicao(1);
-		
-		Thread.sleep(500);
 		
 		assertFalse(usuarios.existeNaListagem("Stan Smith", "stan@smith.com"));
 	}

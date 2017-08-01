@@ -12,7 +12,7 @@ public class UsuariosPage {
 	}
 	
 	public void visita() {
-		driver.get("http://localhost:8080/usuarios");
+		driver.get(new URLDaAplicacao().getUrlBase() + "/usuarios");
 	}
 	
 	public NovoUsuarioPage novo() {
@@ -34,5 +34,11 @@ public class UsuariosPage {
 		driver.findElements(By.tagName("button")).get(posicao - 1).click();
 		Alert alert = driver.switchTo().alert();
 		alert.accept();
+		
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 }
